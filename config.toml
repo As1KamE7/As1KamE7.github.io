@@ -22,8 +22,8 @@ paginate = 8
     weight = 3
 
 [params]
-  author = "John Doe"
-  description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+  author = "As1KamE7"
+  description = "黑夜在前，仍步伐坚定；鲜血染身，却意志清明。荣耀....荣耀的教会猎人.."
   menu_item_separator = " - "
   [[params.social]]
     icon = "github"
